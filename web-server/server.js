@@ -139,7 +139,7 @@ app.post('/sessions/:id/leave', (req, res) => {
 
 app.post('/sessions/:id/write', (req, res) => {
     const {id} = req.params;
-    const{userId, text} = req.body;
+    const{userId, text, mode} = req.body;
 
     const session = getSessionById(id);
 
@@ -149,7 +149,7 @@ app.post('/sessions/:id/write', (req, res) => {
         return;
     }
 
-    if(!userId || typeof text != "string")
+    if(!userId || typeof text != "string" || !mode)
     {
         res.sendStatus(400);
         return;
@@ -161,7 +161,21 @@ app.post('/sessions/:id/write', (req, res) => {
         return;
     }
 
-    session.story = text;
+    if(mode === "replace")
+    {
+        session.story = text;
+    }
+
+    else if(mode === "append")
+    {
+        session.story += text;
+    }
+
+    else
+    {
+        res.sendStatus(400);
+        return;
+    }
 
     res.sendStatus(200);
 });

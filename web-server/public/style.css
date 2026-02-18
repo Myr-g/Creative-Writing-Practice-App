@@ -105,6 +105,12 @@ li {
   margin-bottom: var(--space-sm);
 }
 
+#story_prompt {
+  font-style: italic;
+  opacity: 0.85;
+  margin-bottom: 0.5em;
+}
+
 #story_editor {
   width: 100%;
   min-height: 300px;

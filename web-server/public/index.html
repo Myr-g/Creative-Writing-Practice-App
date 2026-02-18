@@ -7,43 +7,34 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <section id="homepage_view">
-        <section>
-            <h1> [Name]</h1>
-            <p>
-                A place where stories find their rhythm—whether you write alone or let your voice intertwine with others, [Name] invites imagination to wander, return, and grow.
-            </p>
-            <label for="username"> Username: </label>
-            <input type="text" id="username" name="username" required minlength="1" maxlength="64"/>
-        </section>
-
-        <section>
-            <h2> New Story: </h2>
-            <form>
-                <label for="session_name"> Story Title: </label>
-                <input type="text" id="session_name" name="session_name" required minlength="1" maxlength="64"/>
-                <select name="genre" id="genre_select">
-                    <option value=""> --Select a genre--</option>
-                </select>
-                <button type="button" id="create_session">Create</button>
-            </form>
-        </section>
-
-        <section>
-            <h3>Active Sessions</h3>
-            <ul>
-
-            </ul>
-        </section>
+    <section>
+        <h1> [Name]</h1>
+        <p>
+            A place where stories find their rhythm—whether you write alone or let your voice intertwine with others, [Name] invites imagination to wander, return, and grow.
+        </p>
+        <label for="username"> Username: </label>
+        <input type="text" id="username" name="username" required minlength="1" maxlength="64"/>
     </section>
 
-    <section id="session_view" hidden>
-        <h2 id="story_title"></h2>
-        <textarea id="story_editor" rows="10" cols="80" placeholder="You may begin writing..."></textarea>
-        <button type="button" id="save_story">Save</button>
-        <span id="save_status"></span>
+    <section>
+        <h2> New Story: </h2>
+        <form>
+            <label for="session_name"> Story Title: </label>
+            <input type="text" id="session_name" name="session_name" required minlength="1" maxlength="64"/>
+            <select name="genre" id="genre_select">
+                <option value=""> --Select a genre--</option>
+            </select>
+            <button type="button" id="create_session">Create</button>
+        </form>
     </section>
 
-    <script src="app.js"></script>
+    <section>
+        <h3>Active Sessions</h3>
+        <ul>
+
+        </ul>
+    </section>
+    
+    <script src="home.js"></script>
 </body>
 </html>

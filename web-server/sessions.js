@@ -20,9 +20,11 @@ function createSession(name, genre)
         id: session_id,
         name: display_name,
         genre: genre,
+        promptEnabled: null,
         story: "",
         users: new Map(),
-        createdAt:new Date().toISOString()
+        createdAt: new Date().toISOString(),
+        lastUpdatedAt: null
     };
 
     sessions_by_id.set(session_id, new_session);
