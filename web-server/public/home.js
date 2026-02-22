@@ -6,7 +6,7 @@ const create_button = document.getElementById("create_session");
 const session_id = localStorage.getItem("sessionId");
 const user_id = localStorage.getItem("userId");
 
-let joining;
+let joining = false;
 
 // Populate genre dropdown
 fetch('/genres')
@@ -59,6 +59,7 @@ async function loadSessionsList()
 
     data.sessions.forEach(session => {
       const li = document.createElement("li");
+      li.classList.add("session-item");
       li.textContent = `${session.name} - ${session.genre.name} | Writers: ${session.users}`;
       li.dataset.sessionId = session.id;
 
@@ -107,7 +108,6 @@ async function loadSessionsList()
 
           console.log("Joined session:", joinData);
           window.location.href = "/session.html";
-          joining = false;
         }
       })
       
@@ -118,6 +118,11 @@ async function loadSessionsList()
   catch(err)
   {
     console.error("Network error:", err);
+  }
+
+  finally
+  {
+    joining = false;
   }
 }
 
@@ -198,11 +203,15 @@ create_button.addEventListener("click", async () => {
 
     console.log("Joined session:", joinData);
     window.location.href = "/session.html";
-    joining = false;
   } 
   
   catch (err) 
   {
     console.error("Network error:", err);
+  }
+
+  finally
+  {
+    joining = false;
   }
 });

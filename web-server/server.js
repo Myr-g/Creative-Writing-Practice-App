@@ -179,6 +179,47 @@ app.post('/sessions/:id/leave', (req, res) => {
     });
 });
 
+// Allows user to regenerate prompt if and only if prompt regeneration is not locked
+app.post('/sessions/:id/regenerate-prompt', (req, res) => {
+    const {id} = req.params;
+    const {userId} = req.body;
+
+    const session = getSessionById(id);
+
+    if(!session)
+    {
+        res.sendStatus(404);
+        return;
+    }
+
+    if(session.promptLocked)
+    {
+        res.sendStatus(409);
+        console.error("Prompt locked");
+        return;
+    }
+
+    if(!userId)
+    {
+        res.sendStatus(400);
+        return;
+    }
+
+    if(!session.users.has(userId))
+    {
+        res.sendStatus(404);
+        return;
+    }
+
+    // new prompt generation
+
+    res.status(200).json({
+        prompt: "",
+        promptLocked: false,
+        lastUpdatedAt: new Date().toISOString()
+    });
+});
+
 // Allows user to replace or add text to a sessions' story
 app.post('/sessions/:id/write', (req, res) => {
     const {id} = req.params;
@@ -192,7 +233,9 @@ app.post('/sessions/:id/write', (req, res) => {
         return;
     }
 
-    if(!userId || typeof text != "string" || !mode)
+    const oldStory = session.story;
+
+    if(!userId || typeof text != "string")
     {
         res.sendStatus(400);
         return;
@@ -220,6 +263,17 @@ app.post('/sessions/:id/write', (req, res) => {
         return;
     }
 
+    if(session.promptLocked === false)
+    {
+        const new_story = session.story;
+
+        if(oldStory.trim().length === 0 && new_story.trim().length > 0)
+        {
+            session.promptLocked = true;
+        }
+    }
+
+    session.lastUpdatedAt = new Date().toISOString();
     res.sendStatus(200);
 });
 
