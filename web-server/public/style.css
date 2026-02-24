@@ -127,6 +127,37 @@ li {
   margin-bottom: 0.5em;
 }
 
+#regenerate_prompt {
+  margin-bottom: 0.5rem;
+
+  padding: 0.3rem 0.75rem;
+  font-size: 0.85rem;
+
+  background-color: #444;
+  border: 1px solid #333;
+  border-radius: 4px;
+
+  color: white;
+  cursor: pointer;
+
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+}
+
+#regenerate_prompt:hover:not(:disabled) {
+  background-color: #333;
+}
+
+#regenerate_prompt:focus-visible {
+  outline: 2px solid #777;
+  outline-offset: 2px;
+}
+
+#regenerate_prompt:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  background-color: #444;
+}
+
 #story_editor {
   width: 100%;
   min-height: 300px;

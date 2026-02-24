@@ -65,9 +65,12 @@ app.get('/sessions/:id', (req, res) => {
         sessionId: session.id,
         name: session.name,
         genre: session.genre,
+        prompt: session.prompt,
+        promptLocked: session.promptLocked,
         story: session.story,
         userCount: session.users.size,
-        createdAt: session.createdAt
+        createdAt: session.createdAt,
+        lastUpdatedAt: session.lastUpdatedAt
     };
 
     res.status(200).json(response);
@@ -192,13 +195,6 @@ app.post('/sessions/:id/regenerate-prompt', (req, res) => {
         return;
     }
 
-    if(session.promptLocked)
-    {
-        res.sendStatus(409);
-        console.error("Prompt locked");
-        return;
-    }
-
     if(!userId)
     {
         res.sendStatus(400);
@@ -211,12 +207,20 @@ app.post('/sessions/:id/regenerate-prompt', (req, res) => {
         return;
     }
 
+    if(session.promptLocked)
+    {
+        res.sendStatus(409);
+        return;
+    }
+
     // new prompt generation
+
+    session.lastUpdatedAt = new Date().toISOString();
 
     res.status(200).json({
         prompt: "",
         promptLocked: false,
-        lastUpdatedAt: new Date().toISOString()
+        lastUpdatedAt: session.lastUpdatedAt
     });
 });
 
@@ -274,7 +278,9 @@ app.post('/sessions/:id/write', (req, res) => {
     }
 
     session.lastUpdatedAt = new Date().toISOString();
-    res.sendStatus(200);
+    res.status(200).json({
+        promptLocked: session.promptLocked
+    });
 });
 
 const PORT = 8080;

@@ -1,15 +1,96 @@
 const story_title = document.getElementById("story_title");
 const story_prompt = document.getElementById("story_prompt");
 const story_text = document.getElementById("story_editor");
-
+const regen_button = document.getElementById("regenerate_prompt");
 const exit_button = document.getElementById("exit_session");
-
 const save_button = document.getElementById("save_story");
 const save_status = document.getElementById("save_status");
 
 let timer;
 let saving = false;
 let isDirty = false;
+let regenerationDisabled = false;
+
+// Prompt Regeneration
+regen_button.addEventListener("click", async () => {
+  if(regenerationDisabled)
+  {
+    return;
+  }
+
+  regen_button.disabled = true;
+  regen_button.textContent = "Regenerating...";
+
+  const sessionId = localStorage.getItem("sessionId");
+  const userId = localStorage.getItem("userId");
+
+  if(!sessionId || !userId)
+  {
+    console.error("Session or user not found.")
+    regen_button.disabled = false;
+    regen_button.textContent = "Regenerate";
+    return;
+  }
+
+  try
+  {
+    const res = await fetch(`/sessions/${sessionId}/regenerate-prompt`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({userId})
+    });
+
+    if(res.status === 404)
+    {
+      console.error("Session not found OR user not in session:", res.status);
+      regen_button.disabled = false;
+      regen_button.textContent = "Regenerate";
+      return;
+    }
+
+    if(res.status === 400)
+    {
+      console.error("Invalid prompt regeneration request:", res.status);
+      regen_button.disabled = false;
+      regen_button.textContent = "Regenerate";
+      return;
+    }
+
+    if(res.status === 409)
+    {
+      console.log("promptLocked is true; prompt regeneration has been disabled.");
+      regen_button.textContent = "Prompt Locked";
+      regenerationDisabled = true;
+      return;
+    }
+
+    if(!res.ok)
+    {
+      console.error("Unexpected error:", res.status);
+      return;
+    }
+
+    const data = await res.json();
+
+    story_prompt.textContent = data.prompt;
+    regen_button.disabled = false;
+    regen_button.textContent = "Regenerate";
+  }
+
+  catch(err)
+  {
+    console.error("Network error:", err);
+  }
+
+  finally 
+  {
+    if(!regenerationDisabled) 
+    {
+      regen_button.disabled = false;
+      regen_button.textContent = "Regenerate";
+    }
+  }
+});
 
 // Exit Session
 exit_button.addEventListener("click", () => {
@@ -92,7 +173,17 @@ async function saveStory(silent)
 
     console.log("Story Updated.");
     isDirty = false;
+
     showSaveStatus("Saved ✓", true, silent);
+
+    const data = await res.json();
+
+    if(data.promptLocked && !regenerationDisabled)
+    {
+      regenerationDisabled = true;
+      regen_button.disabled = true;
+      regen_button.textContent = "Prompt Locked";
+    }
   }
 
   catch(err)
@@ -167,7 +258,15 @@ window.addEventListener("DOMContentLoaded", async() => {
     const data = await res.json();
 
     story_title.textContent = data.name;
-    story_prompt.textContent = data.genre.prompt;
+    story_prompt.textContent = data.prompt;
+    regenerationDisabled = data.promptLocked;
+
+    if(regenerationDisabled)
+    {
+      regen_button.disabled = true;
+      regen_button.textContent = "Prompt Locked";
+    }
+
     story_text.value = data.story;
   }
 
