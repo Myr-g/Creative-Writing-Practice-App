@@ -16,6 +16,20 @@
 
   --text-main: #222;
   --text-muted: #555;
+
+  --border-subtle: #333;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="dark"] {
+  --bg-page: #121212;
+  --bg-paper: #1b1b1b;
+
+  --text-main: #e6e6e6;
+  --text-muted: #a0a0a0;
+
+  --border-subtle: #333;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
 /* ---------- Page ---------- */
@@ -137,6 +151,15 @@ button:active {
   margin-left: auto;
 }
 
+:root[data-theme="dark"] button {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+:root[data-theme="dark"] button:hover:not(:disabled) {
+  background-color: #333;
+}
+
 /* ---------- Sessions list ---------- */
 ul {
   list-style: none;
@@ -160,4 +183,12 @@ ul {
 
 .session-item:focus {
   outline: 2px solid #ccc;
+}
+
+:root[data-theme="dark"] .session-item:hover {
+  background-color: #242424;
+}
+
+:root[data-theme="dark"] li {
+  border-bottom: 1px solid var(--border-subtle);
 }

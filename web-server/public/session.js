@@ -88,11 +88,45 @@ async function generatePrompt(source)
 }
 
 // Exit Session
-exit_button.addEventListener("click", () => {
-  localStorage.removeItem("sessionId");
-  localStorage.removeItem("userId");
-  localStorage.removeItem("username");
-  window.location.href = "/";
+exit_button.addEventListener("click", async () => {
+
+  const sessionId = localStorage.getItem("sessionId");
+  const userId = localStorage.getItem("userId");
+
+  try 
+  {
+    const res = await fetch(`/sessions/${sessionId}/leave`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({userId})
+    });
+
+    if(res.status === 400)
+    {
+      console.error("Invalid leave request:", res.status);
+      return;
+    }
+
+    if(res.status === 404)
+    {
+      console.error("Session not found OR user not in session:", res.status);
+      return;
+    }
+
+    if(!res.ok)
+    {
+      console.error("Unexpected error:", res.status);
+      return;
+    }
+
+    localStorage.removeItem("sessionId");
+    window.location.href = "/";
+  } 
+  
+  catch(err) 
+  {
+    console.error("Network error:", err);
+  }
 });
 
 // Save story text to session
@@ -251,6 +285,8 @@ window.addEventListener("DOMContentLoaded", async() => {
 
     const data = await res.json();
 
+    const title = document.getElementById("title");
+    title.textContent = data.name;
     story_title.textContent = data.name;
     regenerationDisabled = data.promptLocked;
 
