@@ -1,43 +1,71 @@
-# Collaborative Story Server
+## Collaborative Story Server
+A multi‑user storytelling platform with both a C TCP server and a modern web‑app interface.
 
-A lightweight C-based client–server application that allows multiple users to collaboratively build a shared story in real time. Clients connect over TCP, send commands, and contribute lines to a central story managed by the server.
+## Overview
+Collaborative Story Server lets multiple users build a shared story together in real time. The project includes:
+
+- A C‑based TCP server + CLI client for low‑level networking and concurrency.
+
+- A web‑app version with a browser UI for easier access and broader usability.
+
+- Both versions support joining sessions, writing collaboratively, and viewing the evolving story.
 
 ## Features
-- Multi-client TCP server written in C  
-- Shared story state synchronized across all connected clients  
-- Command-based interaction model  
-- Built-in logging for server activity and debugging  
-- Modular structure for future expansion (commands, story logic, networking)
+### C TCP Server
+- Multi‑client TCP server written in C
 
-## Getting Started
+- Thread‑safe shared story state
 
-### Requirements
-- GCC or Clang  
-- Make (optional, depending on your build setup)  
-- Docker (optional, for containerized deployment)
+- Command‑based interaction model
 
-### Building & Running
-```bash
+- Logging for debugging and auditing
+
+- Modular structure for networking, parsing, and story logic
+
+### Web‑App
+- Browser‑based UI (HTML/CSS/JS)
+
+- Node.js/Express backend
+
+- REST API for sessions and story updates
+
+- Dark‑mode styling
+
+## Running the C Server
+### Build
+```
 gcc -o server src/server/*.c
 gcc -o client src/client/*.c
+```
+
+### Run
+```
 ./server
 ./client <server-ip> <port>
 ```
 
-### Commands
-JOIN <username>           - Registers your username with the server
+ ### Commands
+JOIN <username>
 
+SESSION CREATE <name> <genre>
 
-SESSION CREATE (name) (genre)    - Creates a new collaborative writing session witht the chosen genre
+SESSION JOIN <name>
 
-SESSION JOIN (name)       - Joins an existing session
+LIST SESSIONS
 
-LIST SESSIONS             - Lists all active sessions
+VIEW
 
-QUIT                      - Disconnects from the server
+WRITE <text>
 
-VIEW                      - Displays the story for the current session
+EXIT SESSION
 
-WRITE <text>              - Adds text to the story
+QUIT
 
-EXIT SESSION              - Leaves the current session
+## Running the Web-App
+### Install & Start
+```
+npm install
+npm start
+```
+
+then go to http://localhost:8080
