@@ -185,6 +185,24 @@ ul {
   outline: 2px solid #ccc;
 }
 
+.story-item {
+  padding: 0.6rem 0.75rem;
+  margin: 0.2rem 0;
+
+  border-radius: 6px;
+  cursor: pointer;
+
+  transition: background-color 150ms ease;
+}
+
+.story-item:hover {
+  background-color: #f3f3f3;
+}
+
+.story-item:focus {
+  outline: 2px solid #ccc;
+}
+
 :root[data-theme="dark"] .session-item:hover {
   background-color: #242424;
 }

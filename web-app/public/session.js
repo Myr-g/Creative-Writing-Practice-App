@@ -263,10 +263,11 @@ window.addEventListener("beforeunload", (e) => {
 });
 
 window.addEventListener("DOMContentLoaded", async() => {
-  const sessionId = localStorage.getItem("sessionId");
   const userId = localStorage.getItem("userId");
+  const storyId = localStorage.getItem("storyId");
+  const sessionId = localStorage.getItem("sessionId");
 
-  if(!sessionId || !userId)
+  if(!storyId && !sessionId)
   {
     window.location.href = "/";
     return;

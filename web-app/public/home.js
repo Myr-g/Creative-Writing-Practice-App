@@ -6,6 +6,8 @@ const create_button = document.getElementById("create_session");
 const session_id = localStorage.getItem("sessionId");
 const user_id = localStorage.getItem("userId");
 
+
+
 let joining = false;
 
 // Populate genre dropdown
@@ -23,7 +25,40 @@ fetch('/genres')
     });
   });
 
-  // Populate active sessions list
+loadStoriesList();
+
+function loadStoriesList()
+{
+  const stories = window.story_manager.getStories();
+  const stories_list = document.getElementById("stories_list");
+  stories_list.innerHTML = "";
+
+  if(stories.length === 0)
+  {
+    const li = document.createElement("li");
+    li.textContent = "No saved stories — create one to get started!";
+    stories_list.appendChild(li);
+  }
+
+  else
+  {
+    for(const story of stories)
+    {
+      const li = document.createElement("li");
+      li.classList.add("story-item");
+      li.textContent = story.title;
+      li.dataset.storyId = story.id;
+      stories_list.appendChild(li);
+
+      li.addEventListener("click", () => {
+        localStorage.setItem("storyId", story.id);
+        window.location.href = "/session.html";
+      });
+    }
+  }
+}
+
+// Populate active sessions list
 loadSessionsList();
 setInterval(loadSessionsList, 5000);
 
@@ -52,7 +87,7 @@ async function loadSessionsList()
     if(data.sessions.length === 0)
     {
       const li = document.createElement("li");
-      li.textContent = "No active sessions yet —  create one of your own!";
+      li.textContent = "No active sessions — create one of your own!";
       sessions_list.appendChild(li);
       return;
     }

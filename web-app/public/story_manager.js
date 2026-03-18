@@ -1,4 +1,4 @@
-const crypto = require("crypto");
+
 
 const storage_key = "stories";
 
@@ -74,15 +74,17 @@ function saveStory(story)
         }
     }
 
-    saveStories();
+    saveStories(stories);
 }
 
 function deleteStory(id)
 {
-
+    const stories = loadStories();
+    const storiesAfterDeletion = stories.filter(story => story.id !== id);
+    saveStories(storiesAfterDeletion);
 }
 
-window.StoryManager = {
+window.story_manager = {
     getStories,
     getStory,
     createStory,
