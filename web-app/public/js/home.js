@@ -50,8 +50,34 @@ function loadStoriesList()
 
       li.addEventListener("click", () => {
         localStorage.setItem("storyId", story.id);
-        window.location.href = "/session.html";
+        window.location.href = "/writing.html";
       });
+
+      const btn = document.createElement("button");
+      btn.classList.add("delete_story")
+      btn.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="3 6 5 6 21 6"></polyline>
+        <path d="M19 6l-1 14H6L5 6"></path>
+        <path d="M10 11v6"></path>
+        <path d="M14 11v6"></path>
+        <path d="M9 6V4h6v2"></path>
+      </svg>
+`;
+
+
+      btn.addEventListener("click", (event) => {
+      
+        event.stopPropagation();
+        if(window.confirm("Are you sure?"))
+        {
+          window.story_manager.deleteStory(story.id);
+          loadStoriesList();
+        }
+      })
+
+      li.appendChild(btn);
     }
   }
 }
@@ -180,7 +206,7 @@ create_button.addEventListener("click", async () => {
 
   const story = window.story_manager.createStory(data);
   localStorage.setItem("storyId", story.id);
-  window.location.href = "/session.html";
+  window.location.href = "/writing.html";
 
   /*
   try 

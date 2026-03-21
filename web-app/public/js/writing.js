@@ -114,6 +114,8 @@ async function saveStory(silent)
   if(!storyId)
   {
     console.error("Story ID not found.")
+    showSaveStatus("Save Failed.", false, silent);
+    saving = false;
     return;
   }
 
