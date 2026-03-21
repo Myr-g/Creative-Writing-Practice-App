@@ -6,8 +6,6 @@ const create_button = document.getElementById("create_session");
 const session_id = localStorage.getItem("sessionId");
 const user_id = localStorage.getItem("userId");
 
-
-
 let joining = false;
 
 // Populate genre dropdown
@@ -173,6 +171,18 @@ create_button.addEventListener("click", async () => {
     return;
   }
 
+  const data = {
+    title: name,
+    genre: genre,
+    promptType: "template", 
+    prompt: ""              
+  };
+
+  const story = window.story_manager.createStory(data);
+  localStorage.setItem("storyId", story.id);
+  window.location.href = "/session.html";
+
+  /*
   try 
   {
     const createRes = await fetch("/sessions", {
@@ -248,5 +258,5 @@ create_button.addEventListener("click", async () => {
   finally
   {
     joining = false;
-  }
+  }*/
 });

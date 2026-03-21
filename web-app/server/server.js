@@ -1,6 +1,7 @@
 const express = require("express");
 const { getGenres } = require("./genres");
 const { createSession, getSessions, getSessionById, addUserToSession, removeUserFromSession } = require("./sessions");
+const { generatePrompt } = require("./utils/prompt_generator");
 const path = require("path");
 
 const app = express();
@@ -183,44 +184,14 @@ app.post('/sessions/:id/leave', (req, res) => {
     });
 });
 
-// Generates or replaces the session prompt if and only if prompt generation is not locked
-app.post('/sessions/:id/generate-prompt', (req, res) => {
-    const {id} = req.params;
-    const {userId, source} = req.body;
+// Generates a writing prompt if and only if prompt generation is not locked
+app.post('/prompts/generate', (req, res) => {
+    const {source, genre} = req.body;
 
-    const session = getSessionById(id);
-
-    if(!session)
-    {
-        res.sendStatus(404);
-        return;
+    if (!source || !["none", "template", "challenge", "community", "ai"].includes(source)) 
+        {
+        return res.sendStatus(400);
     }
-
-    if(!userId)
-    {
-        res.sendStatus(400);
-        return;
-    }
-
-    if(!source || (source !== "none" && source !== "static" && source !== "ai"))
-    {
-        res.sendStatus(400);
-        return;
-    }
-
-    if(!session.users.has(userId))
-    {
-        res.sendStatus(404);
-        return;
-    }
-
-    if(session.promptLocked)
-    {
-        res.sendStatus(409);
-        return;
-    }
-
-    // new prompt generation
 
     let prompt = "";
 
@@ -229,9 +200,19 @@ app.post('/sessions/:id/generate-prompt', (req, res) => {
         prompt = "";
     }
 
-    else if(source === "static")
+    else if(source === "template")
     {
-        prompt = session.genre.prompt;
+        prompt = generatePrompt();
+    }
+
+    else if (source === "challenge") 
+    {
+        // future challenge prompt logic
+    }
+
+    else if (source === "community") 
+    {
+        // future community prompt logic
     }
 
     else if(source === "ai")
@@ -239,15 +220,7 @@ app.post('/sessions/:id/generate-prompt', (req, res) => {
         // whatever would be needed for ai integration
     }
 
-    session.promptSource = source;
-    session.prompt = prompt;
-    session.lastUpdatedAt = new Date().toISOString();
-
-    res.status(200).json({
-        prompt: prompt,
-        promptLocked: false,
-        lastUpdatedAt: session.lastUpdatedAt
-    });
+    res.status(200).json({ prompt });
 });
 
 // Allows user to replace or add text to a sessions' story

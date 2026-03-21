@@ -1,5 +1,3 @@
-
-
 const storage_key = "stories";
 
 function loadStories()

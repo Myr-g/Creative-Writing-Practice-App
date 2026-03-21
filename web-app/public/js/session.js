@@ -264,10 +264,9 @@ window.addEventListener("beforeunload", (e) => {
 
 window.addEventListener("DOMContentLoaded", async() => {
   const userId = localStorage.getItem("userId");
-  const storyId = localStorage.getItem("storyId");
   const sessionId = localStorage.getItem("sessionId");
 
-  if(!storyId && !sessionId)
+  if(!userId && !sessionId)
   {
     window.location.href = "/";
     return;
