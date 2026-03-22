@@ -82,10 +82,41 @@ function deleteStory(id)
     saveStories(storiesAfterDeletion);
 }
 
+function formatStoryForDownload(story) 
+{
+  let formattedStory = [];
+
+  formattedStory.push(story.title);
+  
+  const metadata = [];
+
+  if(story.genre && story.genre.trim() !== "") 
+  {
+    metadata.push(`Genre: ${story.genre}`);
+  }
+
+  if(story.prompt && story.prompt.trim() !== "") 
+  {
+    metadata.push(`Prompt: ${story.prompt}`);
+  }
+  
+  if(metadata.length > 0)
+  {
+  	formattedStory.push(metadata.join("\n"));
+  }
+  
+  formattedStory.push("---");
+
+  formattedStory.push(story.content || "");
+
+  return formattedStory.join("\n\n");
+}
+
 window.story_manager = {
     getStories,
     getStory,
     createStory,
     saveStory,
-    deleteStory
+    deleteStory,
+    formatStoryForDownload
 };

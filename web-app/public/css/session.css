@@ -184,6 +184,10 @@ button:disabled {
   cursor: default;
 }
 
+#download_story {
+  margin-left: auto;
+}
+
 :root[data-theme="dark"] button {
   background-color: #2a2a2a;
   border-color: #444;

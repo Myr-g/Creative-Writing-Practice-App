@@ -6,6 +6,7 @@ const regen_button = document.getElementById("regenerate_prompt");
 const exit_button = document.getElementById("exit_session");
 const save_button = document.getElementById("save_story");
 const save_status = document.getElementById("save_status");
+const download_button = document.getElementById("download_story");
 
 let timer;
 let saving = false;
@@ -182,6 +183,36 @@ function showSaveStatus(message, success = true, silent = false)
     save_status.classList.remove("visible");
   }, 1500);
 }
+
+download_button.addEventListener("click", () => {
+  const storyId = localStorage.getItem("storyId");
+
+  const story = window.story_manager.getStory(storyId);
+
+  if(!story)
+  {
+    return;
+  }
+
+  const formattedStory = window.story_manager.formatStoryForDownload(story);
+
+  const filename = story.title.replace(/[\\\/:*?"<>|]/g, "");
+
+  if(!filename)
+  {
+    filename = "story";
+  }
+
+  const blob = new Blob([formattedStory], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.txt`;
+  a.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+});
 
 window.addEventListener("beforeunload", (e) => {
   if (!isDirty) return;

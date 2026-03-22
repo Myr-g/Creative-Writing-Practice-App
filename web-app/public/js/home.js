@@ -44,30 +44,28 @@ function loadStoriesList()
     {
       const li = document.createElement("li");
       li.classList.add("story-item");
-      li.textContent = story.title;
       li.dataset.storyId = story.id;
-      stories_list.appendChild(li);
 
       li.addEventListener("click", () => {
         localStorage.setItem("storyId", story.id);
         window.location.href = "/writing.html";
       });
 
-      const btn = document.createElement("button");
-      btn.classList.add("delete_story")
-      btn.innerHTML = `
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      const titleSpan = document.createElement("span");
+      titleSpan.textContent = story.title;
+
+      const deleteButton = document.createElement("button");
+      deleteButton.classList.add("delete_story")
+      deleteButton.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polyline points="3 6 5 6 21 6"></polyline>
         <path d="M19 6l-1 14H6L5 6"></path>
         <path d="M10 11v6"></path>
         <path d="M14 11v6"></path>
         <path d="M9 6V4h6v2"></path>
-      </svg>
-`;
+      </svg>`;
 
-
-      btn.addEventListener("click", (event) => {
+      deleteButton.addEventListener("click", (event) => {
       
         event.stopPropagation();
         if(window.confirm("Are you sure?"))
@@ -77,7 +75,9 @@ function loadStoriesList()
         }
       })
 
-      li.appendChild(btn);
+      li.appendChild(titleSpan);
+      li.appendChild(deleteButton);
+      stories_list.appendChild(li);
     }
   }
 }
