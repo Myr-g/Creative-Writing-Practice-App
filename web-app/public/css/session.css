@@ -117,10 +117,19 @@ section {
   cursor: not-allowed;
 }
 
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 /* ---------- Editor ---------- */
 #story_editor {
   width: 100%;
-  min-height: 18rem;
+  min-height: 22rem;
 
   border: none;
   resize: vertical;

@@ -11,6 +11,48 @@ let saving = false;
 let isDirty = false;
 let regenerationDisabled = false;
 
+// Editing & saving story title
+story_title.addEventListener("blur", saveTitle);
+
+// Prevent Enter key from creating a new line and save
+story_title.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    saveTitle(); // Save immediately
+    story_title.blur(); // End editing
+  }
+});
+
+function saveTitle() 
+{
+  const storyId = localStorage.getItem("storyId");
+
+  if(!storyId)
+  {
+    return;
+  }
+
+  const story = window.story_manager.getStory(storyId);
+
+  if(!story)
+  {
+    return;
+  }
+
+  let newTitle = story_title.textContent.trim();
+
+  if(newTitle.length === 0) 
+  {
+    newTitle = "Untitled";
+  }
+
+  story.title = newTitle;
+  story_title.textContent = newTitle;
+  page_name.textContent = newTitle;
+
+  window.story_manager.saveStory(story);
+}
+
 // Prompt Regeneration
 regen_button.addEventListener("click", async () => {
   generatePrompt("static");
@@ -24,7 +66,8 @@ async function generatePrompt(source)
   }
 
   regen_button.disabled = true;
-  regen_button.textContent = "Generating...";
+  const icon = regen_button.querySelector('svg')
+  icon.classList.add('spin');
 
   const sessionId = localStorage.getItem("sessionId");
   const userId = localStorage.getItem("userId");

@@ -47,6 +47,7 @@ function createStory(data)
         genre: data.genre,
         promptType: data.promptType,
         prompt: data.prompt,
+        promptLocked: false,
         content: "",
         createdAt: new Date().toISOString(),
         updatedAt: null
@@ -67,6 +68,12 @@ function saveStory(story)
         if(stories[i].id === story.id)
         {
             story.updatedAt = new Date().toISOString();
+            
+            if(stories[i].content.trim().length === 0 && story.content.trim().length > 0)
+            {
+                story.promptLocked = true;
+            }
+            
             stories[i] = story;
             break;
         }

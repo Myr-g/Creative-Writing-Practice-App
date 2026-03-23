@@ -13,6 +13,48 @@ let saving = false;
 let isDirty = false;
 let regenerationDisabled = false;
 
+// Editing & saving story title
+story_title.addEventListener("blur", saveTitle);
+
+// Prevent Enter key from creating a new line and save
+story_title.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    saveTitle(); // Save immediately
+    story_title.blur(); // End editing
+  }
+});
+
+function saveTitle() 
+{
+  const storyId = localStorage.getItem("storyId");
+
+  if(!storyId)
+  {
+    return;
+  }
+
+  const story = window.story_manager.getStory(storyId);
+
+  if(!story)
+  {
+    return;
+  }
+
+  let newTitle = story_title.textContent.trim();
+
+  if(newTitle.length === 0) 
+  {
+    newTitle = "Untitled";
+  }
+
+  story.title = newTitle;
+  story_title.textContent = newTitle;
+  page_name.textContent = newTitle;
+
+  window.story_manager.saveStory(story);
+}
+
 // Prompt Regeneration
 regen_button.addEventListener("click", async () => {
   generatePrompt("template");
@@ -26,7 +68,8 @@ async function generatePrompt(source)
   }
 
   regen_button.disabled = true;
-  regen_button.textContent = "Generating...";
+  const icon = regen_button.querySelector('svg')
+  icon.classList.add('spin');
 
   try
   {
@@ -40,7 +83,13 @@ async function generatePrompt(source)
     {
       console.error("Prompt generation failed:", res.status);
       regen_button.disabled = false;
-      regen_button.textContent = "Regenerate";
+      regen_button.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 2v6h-6"/>
+        <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+        <path d="M3 22v-6h6"/>
+        <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+      </svg>`;
       return;
     }
 
@@ -68,7 +117,13 @@ async function generatePrompt(source)
     if(!regenerationDisabled) 
     {
       regen_button.disabled = false;
-      regen_button.textContent = "Regenerate";
+      regen_button.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 2v6h-6"/>
+        <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+        <path d="M3 22v-6h6"/>
+        <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+      </svg>`;
     }
   }
 }
@@ -140,6 +195,12 @@ async function saveStory(silent)
     isDirty = false;
 
     showSaveStatus("Saved ✓", true, silent);
+
+    if(story.promptLocked && !regenerationDisabled)
+    {
+      regenerationDisabled = true;
+      regen_button.disabled = true;
+    }
   }
 
   catch(err)
@@ -196,7 +257,7 @@ download_button.addEventListener("click", () => {
 
   const formattedStory = window.story_manager.formatStoryForDownload(story);
 
-  const filename = story.title.replace(/[\\\/:*?"<>|]/g, "");
+  let filename = story.title.replace(/[\\\/:*?"<>|]/g, "");
 
   if(!filename)
   {
@@ -230,18 +291,18 @@ window.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
-  const data = window.story_manager.getStory(storyId);
+  const story = window.story_manager.getStory(storyId);
 
-  if(!data)
+  if(!story)
   {
     window.location.href = "/";
     return;
   }
 
-  page_name.textContent = data.title;
-  story_title.textContent = data.title;
+  page_name.textContent = story.title;
+  story_title.textContent = story.title;
   
-  if(data.promptType === "none")
+  if(story.promptType === "none")
   {
     regenerationDisabled = true;
     regen_button.disabled = true;
@@ -250,13 +311,20 @@ window.addEventListener("DOMContentLoaded", () => {
 
   else
   {
-    if(!data.prompt)
+    if(!story.prompt)
     {
       generatePrompt("template");
     }
 
-    story_prompt.textContent = data.prompt;
+    story_prompt.textContent = story.prompt;
   }
 
-  story_text.value = data.content;
+  regenerationDisabled = story.promptLocked;
+
+  if(regenerationDisabled && regen_button)
+  {
+    regen_button.disabled = true;
+  }
+
+  story_text.value = story.content;
 });
