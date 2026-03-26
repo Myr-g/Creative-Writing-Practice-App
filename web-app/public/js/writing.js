@@ -255,11 +255,7 @@ function showSaveStatus(message, success = true, silent = false)
 download_button.addEventListener("click", (event) => {
   event.stopPropagation();
 
-  const rect = download_button.getBoundingClientRect();
-  download_menu.style.left = rect.left + "px";
-  download_menu.style.top = rect.bottom + "px";
-
-  download_menu.style.display = "block";
+  download_menu.classList.toggle("open");
 });
 
 txt_download_button.addEventListener("click", (event) => {
@@ -291,6 +287,7 @@ txt_download_button.addEventListener("click", (event) => {
   a.click();
 
   setTimeout(() => URL.revokeObjectURL(url), 100);
+  download_menu.classList.remove("open");
 });
 
 pdf_download_button.addEventListener("click", async (event) => {
@@ -322,12 +319,13 @@ pdf_download_button.addEventListener("click", async (event) => {
   a.click();
 
   setTimeout(() => URL.revokeObjectURL(url), 100);
+  download_menu.classList.remove("open");
 });
 
 document.addEventListener("click", (event) => {
-  if (!download_menu.contains(event.target) && event.target !== download_button) 
+  if(!download_menu.contains(event.target) && event.target !== download_button) 
   {
-    download_menu.style.display = "none";
+    download_menu.classList.remove("open");
   }
 });
 

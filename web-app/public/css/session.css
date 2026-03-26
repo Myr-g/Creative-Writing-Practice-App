@@ -193,23 +193,44 @@ button:disabled {
   cursor: default;
 }
 
-#download_story {
-  margin-left: auto;
+.download {
+    position: relative;
+    display: inline-block;
+    margin-left: auto;
 }
 
 #download_menu {
-    display: none;
     position: absolute;
+    top: calc(100% + 6px);
+    right: -10px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 
     background: var(--bg-paper);
     border: 1px solid var(--border-subtle);
+    border-radius: 8px;
 
     padding: 6px;
-    border-radius: 6px;
 
     box-shadow: var(--shadow-soft);
+
+    opacity: 0;
+    transform: translateY(6px) scale(0.98);
+    pointer-events: none;
+
+    transition: 
+        opacity 0.15s ease,
+        transform 0.15s ease;
+
     z-index: 1000;
-    transform: translateY(4px);
+}
+
+#download_menu.open {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
 }
 
 :root[data-theme="dark"] button {
