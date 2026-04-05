@@ -202,7 +202,7 @@ app.post('/prompts/generate', (req, res) => {
 
     else if(source === "template")
     {
-        prompt = generatePrompt();
+        prompt = generatePrompt(genre);
     }
 
     else if (source === "challenge") 

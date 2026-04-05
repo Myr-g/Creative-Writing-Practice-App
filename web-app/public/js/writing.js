@@ -80,10 +80,14 @@ async function generatePrompt(source)
 
   try
   {
+    const storyId = localStorage.getItem("storyId");
+    const story = getStory(storyId);
+    const genre = story.genre;
+
     const res = await fetch(`/prompts/generate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({source})
+      body: JSON.stringify({source, genre})
     });
 
     if(!res.ok) 
@@ -104,9 +108,6 @@ async function generatePrompt(source)
     story_prompt.textContent = data.prompt;
 
     // Save prompt into the local story
-    const storyId = localStorage.getItem("storyId");
-    const story = getStory(storyId);
-
     if(story) 
     {
       story.prompt = data.prompt;

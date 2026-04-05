@@ -1,31 +1,49 @@
 const templates = [
-  `{character} discovers {object} {location}.`,
-  `{character} receives {object} with a message that reads: "{message}".`,
-  `before {event}, {character} must {goal}.`,
-  `{character} and {secondary_character} both want {object}, but {condition}.`,
-  `the discovery of {object} results in a rash decision, but {condition}.`,
-  `one day, {character} discovers {strange_event}.`,
-  `{character} realizes {condition}.`,
-  `{object} appears {location}.`,
-  `No one {location} notices when {strange_event}.`
+  `{character_adj} {character} discovers {object} {location}, but {condition}.`,
+  `{character_adj} {character} receives {object} with a message that reads: "{message}".`,
+  '{character_adj} {character} must {goal}, but {secondary_character} is trying to stop them.',
+  `before {event}, {character_adj} {character} must {goal}, or {consequence}.`,
+  `{character_adj} {character} and {secondary_character} both want {object}, but {condition}.`,
+  `after discovering {object}, {character_adj} {character} makes a rash decision—but {condition}.`,
+  `when {strange_event} {location}, everybody ignores it—except {character_adj} {character}.`,
+  `{character_adj} {character} realizes {condition}, and must decide whether to {goal}.`,
+  `when {object} appears {location}, {character_adj} {character} is forced to {goal}.`,
+  `everyone believes {condition}, but {character_adj} {character} knows the truth.`
 ];
 
 const general_word_banks = {
   character: [
-    "a traveler",
-    "a detective",
-    "a student",
-    "a journalist",
-    "a merchant",
-    "a scientist",
-    "an artist",
-    "a caretaker",
-    "a historian",
-    "a librarian",
-    "a messenger",
-    "a teacher",
-    "a musician",
-    "an explorer"
+    "traveler",
+    "survivor",
+    "detective",
+    "college student",
+    "journalist",
+    "merchant",
+    "scientist",
+    "artist",
+    "librarian",
+    "messenger",
+    "teacher",
+    "musician",
+    "author",
+    "photographer",
+    "athlete",
+    "programmer",
+    "witness",
+    "suspect"
+  ],
+
+  character_adj: [
+    "a young",
+    "an experienced",
+    "a quiet",
+    "a curious",
+    "a disgraced",
+    "a paranoid",
+    "an obsessive",
+    "an overly ambitious",
+    "a sleep-deprived",
+    "a guilt-ridden"
   ],
 
   secondary_character: [
@@ -83,10 +101,14 @@ const general_word_banks = {
   ],
 
   strange_event: [
-    "gravity stops working",
+    "with each passing day, people feel lighter than before",
     "everyone forgets the same person",
-    "time repeats every hour",
-    "all reflections disappear"
+    "people grow slightly less aware of one another each day",
+    "reflections begin moving on their own",
+    "someone they know disappears without a trace",
+    "they begin hearing their own thoughts spoken aloud",
+    "a stranger recognizes them—but they’ve never met",
+    "they wake up with memories that aren’t theirs"
   ],
 
   message: [
@@ -101,28 +123,75 @@ const general_word_banks = {
   ],
 
   goal: [
-    "deliver an urgent message",
-    "uncover a hidden truth",
-    "protect a valuable secret",
-    "reach the meeting point",
-    "escape the approaching danger",
-    "meet an unknown contact",
-    "hide from a dangerous pursuer",
-    "decipher a cryptic note",
-    "stop a disastrous event"
+    "deliver a message that could change everything",
+    "uncover the truth behind a long-buried secret",
+    "protect something that was never meant to be found",
+    "reach the meeting point before it's too late",
+    "escape before the situation turns deadly",
+    "meet a contact who may not be trustworthy",
+    "stay one step ahead of someone hunting them",
+    "decipher a message no one else can understand",
+    "find out who is really behind it all",
+    "prove something everyone else denies",
+    "track down someone who doesn’t want to be found",
+    "figure out what’s real and what isn’t",
+    "prevent a mistake that can’t be undone"
   ],
 
   condition: [
-    "revealing it could bring about disaster",
-    "someone else is already looking for it",
-    "nobody knows the full truth",
-    "someone is hiding a secret",
-    "time is running out"
+    "it's being kept hidden for a reason",
+    "they may not survive long enough to understand it",
+    "they're being watched",
+    "every answer only leads to more questions",
+    "it isn't what it first appeared to be",
+    "they can’t trust their own memory",
+    "they are being framed for something they didn’t do",
+    "they’re already too late to stop what’s coming",
+    "someone they trusted has betrayed them",
+    "someone is manipulating what they think they know",
+    "they can’t tell anyone what they’ve discovered"
   ]
 };
 
 const genre_specific_word_banks = {
+  horror: {
+    add: {
+      character: [
+        "mortician",
+        "night guard",
+        "medium",
+        "psychologist",
+        "paranormal investigator"
+      ],
 
+      object: [
+        "an old tape recorder",
+        "a blood-stained journal",
+        "an antique doll",
+        "a rusty crucifix"
+      ],
+
+      location: [
+        "in an empty parking garage",
+        "in an abandoned church",
+        "at a cemetery covered in heavy fog"
+      ],
+
+      message: [
+        "you shouldn't have come here",
+        "you won't be alone much longer",
+        "it's your turn now"
+      ]
+    },
+
+    override: {
+      strange_event: [
+        "the lights start flickering in a constant rhythm",
+        "the wind stops all at once",
+        "shadows linger around longer than their owners"
+      ]
+    }
+  }
 };
 
 function randomItem(array) 
@@ -130,19 +199,33 @@ function randomItem(array)
   return array[Math.floor(Math.random() * array.length)];
 }
 
-function generatePrompt()
+function generatePrompt(genre)
 {
   const template = randomItem(templates);
   
   return template.replace(/\{(\w+)\}/g, (match, key) => {
-    const word_bank = general_word_banks[key];
+    const initial_word_bank = general_word_banks[key];
+    let final_word_bank = initial_word_bank;
 
-    if(!word_bank)
+    if(!initial_word_bank)
     {
       return match;
     }
 
-    return randomItem(word_bank);
+    if(genre && genre_specific_word_banks[genre])
+    {
+      if(genre_specific_word_banks[genre].override[key])
+      {
+        final_word_bank = genre_specific_word_banks[genre].override[key];
+      }
+
+      else if(genre_specific_word_banks[genre].add[key])
+      {
+        final_word_bank = [...initial_word_bank, ...genre_specific_word_banks[genre].add[key]];
+      }
+    }
+
+    return randomItem(final_word_bank);
   });
 }
 
