@@ -101,6 +101,7 @@ async function generatePrompt(source)
 
     const data = await res.json();
     story_prompt.textContent = data.prompt;
+    story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
     saveStory();
   }
 
@@ -325,12 +326,13 @@ window.addEventListener("DOMContentLoaded", async() => {
 
     if(!data.prompt && !regenerationDisabled)
     {
-      generatePrompt("template");
+      generatePrompt(data.promptSource);
     }
 
     else
     {
       story_prompt.textContent = data.prompt;
+      story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
     }
 
     if(regenerationDisabled && regen_button)

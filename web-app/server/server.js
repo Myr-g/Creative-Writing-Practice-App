@@ -1,7 +1,7 @@
 const express = require("express");
 const { getGenres } = require("./genres");
 const { createSession, getSessions, getSessionById, addUserToSession, removeUserFromSession } = require("./sessions");
-const { generatePrompt } = require("./utils/prompt_generator");
+const { generatePrompt, generateChallengePrompt } = require("./utils/prompt_generator");
 const path = require("path");
 
 const app = express();
@@ -188,8 +188,8 @@ app.post('/sessions/:id/leave', (req, res) => {
 app.post('/prompts/generate', (req, res) => {
     const {source, genre} = req.body;
 
-    if (!source || !["none", "template", "challenge", "community", "ai"].includes(source)) 
-        {
+    if(!source || !["none", "template", "challenge", "community", "ai"].includes(source)) 
+    {
         return res.sendStatus(400);
     }
 
@@ -207,7 +207,7 @@ app.post('/prompts/generate', (req, res) => {
 
     else if (source === "challenge") 
     {
-        // future challenge prompt logic
+        prompt = generateChallengePrompt(genre);
     }
 
     else if (source === "community") 

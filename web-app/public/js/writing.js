@@ -64,7 +64,9 @@ function saveTitle()
 
 // Prompt Regeneration
 regen_button.addEventListener("click", async () => {
-  generatePrompt("template");
+  const storyId = localStorage.getItem("storyId");
+  const story = getStory(storyId);
+  generatePrompt(story.promptType);
 });
 
 async function generatePrompt(source)
@@ -106,6 +108,7 @@ async function generatePrompt(source)
 
     const data = await res.json();
     story_prompt.textContent = data.prompt;
+    story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
 
     // Save prompt into the local story
     if(story) 
@@ -369,10 +372,11 @@ window.addEventListener("DOMContentLoaded", () => {
   {
     if(!story.prompt)
     {
-      generatePrompt("template");
+      generatePrompt(story.promptType);
     }
 
     story_prompt.textContent = story.prompt;
+    story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
   }
 
   regenerationDisabled = story.promptLocked;

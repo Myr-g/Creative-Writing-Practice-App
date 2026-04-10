@@ -6,7 +6,7 @@ const templates = [
   `{character_adj} {character} and {secondary_character} both want {object}, but {condition}.`,
   `after discovering {object}, {character_adj} {character} makes a rash decision—but {condition}.`,
   `when {strange_event} {location}, everybody ignores it—except {character_adj} {character}.`,
-  `{character_adj} {character} realizes {condition}, and must decide whether to {goal}.`,
+  `{character_adj} {character} realizes {condition}, and must decide whether or not to {goal}.`,
   `when {object} appears {location}, {character_adj} {character} is forced to {goal}.`,
   `everyone believes {condition}, but {character_adj} {character} knows the truth.`
 ];
@@ -194,6 +194,16 @@ const genre_specific_word_banks = {
   }
 };
 
+const challenge_rules = [
+  "don't use dialogue",
+  "keep the story under 200 words",
+  "write in first person",
+  "use an unreliable narrator",
+  "make the ending recontextualize the entire story",
+  "focus on atmosphere over action",
+  "imply conflict without directly stating it"
+]
+
 function randomItem(array) 
 {
   return array[Math.floor(Math.random() * array.length)];
@@ -229,4 +239,42 @@ function generatePrompt(genre)
   });
 }
 
-module.exports = {generatePrompt};
+function generateChallengePrompt(genre)
+{
+  let subject = Math.random() < 0.5 ? "{character}" : "{object}";
+  let tension = Math.random() < 0.5 ? "{condition}" : "{strange_event}";
+  const challenge_rule = randomItem(challenge_rules);
+
+  const template = `Write a short story or scene that:
+  - includes ${subject}
+  - takes place {location}
+  - involves ${tension}
+  - rule: ${challenge_rule}`;
+
+  return template.replace(/\{(\w+)\}/g, (match, key) => {
+    const initial_word_bank = general_word_banks[key];
+    let final_word_bank = initial_word_bank;
+
+    if(!initial_word_bank)
+    {
+      return match;
+    }
+
+    if(genre && genre_specific_word_banks[genre])
+    {
+      if(genre_specific_word_banks[genre].override[key])
+      {
+        final_word_bank = genre_specific_word_banks[genre].override[key];
+      }
+
+      else if(genre_specific_word_banks[genre].add[key])
+      {
+        final_word_bank = [...initial_word_bank, ...genre_specific_word_banks[genre].add[key]];
+      }
+    }
+
+    return randomItem(final_word_bank);
+  });
+}
+
+module.exports = {generatePrompt, generateChallengePrompt};
