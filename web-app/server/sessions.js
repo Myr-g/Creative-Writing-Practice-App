@@ -4,7 +4,7 @@ const { generateSessionId, generateUserId } = require("./utils/ids");
 const sessions_by_id = new Map(); // key is the session id, value is the session
 const sessions_by_name = new Map(); //key is the session name, value is the session id
 
-function createSession(name, genre)
+function createSession(name, genre, promptType)
 {
     const display_name = name;
     const normalized_name = name.toLowerCase();
@@ -20,13 +20,13 @@ function createSession(name, genre)
         id: session_id,
         name: display_name,
         genre: genre,
-        promptSource: "",
+        promptType: promptType,
         prompt: "",
         promptLocked: false,
-        story: "",
+        content: "",
         users: new Map(),
         createdAt: new Date().toISOString(),
-        lastUpdatedAt: null
+        updatedAt: null
     };
 
     sessions_by_id.set(session_id, new_session);

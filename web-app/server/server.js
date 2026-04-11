@@ -66,13 +66,13 @@ app.get('/sessions/:id', (req, res) => {
         sessionId: session.id,
         name: session.name,
         genre: session.genre,
-        promptSource: session.promptSource,
+        promptType: session.promptType,
         prompt: session.prompt,
         promptLocked: session.promptLocked,
-        story: session.story,
+        content: session.content,
         userCount: session.users.size,
         createdAt: session.createdAt,
-        lastUpdatedAt: session.lastUpdatedAt
+        updatedAt: session.updatedAt
     };
 
     res.status(200).json(response);
@@ -82,7 +82,7 @@ app.get('/sessions/:id', (req, res) => {
 app.post('/sessions', (req, res) => {
     console.log(req.body);
 
-    const {name, genre} = req.body;
+    const {name, genre, promptType} = req.body;
     const genre_list = getGenres();
     let chosen_genre = null;
 
@@ -107,7 +107,7 @@ app.post('/sessions', (req, res) => {
         return;
     }
 
-    const session = createSession(name, chosen_genre);
+    const session = createSession(name, chosen_genre, promptType);
 
     if(!session)
     {
@@ -235,8 +235,8 @@ app.post('/sessions/:id/write', (req, res) => {
         res.sendStatus(404);
         return;
     }
-
-    const oldStory = session.story;
+    
+    const oldStory = session.content;
 
     if(!userId || typeof text != "string")
     {
@@ -268,7 +268,7 @@ app.post('/sessions/:id/write', (req, res) => {
 
     if(session.promptLocked === false)
     {
-        const new_story = session.story;
+        const new_story = session.content;
 
         if(oldStory.trim().length === 0 && new_story.trim().length > 0)
         {
@@ -276,7 +276,7 @@ app.post('/sessions/:id/write', (req, res) => {
         }
     }
 
-    session.lastUpdatedAt = new Date().toISOString();
+    session.updatedAt = new Date().toISOString();
     res.status(200).json({
         promptLocked: session.promptLocked
     });

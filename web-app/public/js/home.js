@@ -1,7 +1,5 @@
 import { getStories, deleteStory, createStory } from "./story_manager.js";
 
-let joining = false;
-
 const new_story_panel_toggle = document.getElementById("new_story");
 const new_story_panel = document.getElementById("new_story_panel");
 
@@ -16,6 +14,7 @@ const cancel_button = document.getElementById("cancel_new_story");
 const create_button = document.getElementById("create_new_story");
 
 let story_type = "solo";
+let joining = false;
 
 new_story_panel_toggle.addEventListener("click", () => {
   new_story_panel.hidden = false;
@@ -271,6 +270,7 @@ create_button.addEventListener("click", async () => {
     try 
     {
       const username = username_input.value.trim();
+      const promptType = prompt_type.value;
 
       if(!username)
       {
@@ -288,7 +288,7 @@ create_button.addEventListener("click", async () => {
       const createRes = await fetch("/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, genre })
+        body: JSON.stringify({name, genre, promptType})
       });
 
       if(createRes.status === 400)

@@ -20,31 +20,55 @@ let timer;
 let saving = false;
 let isDirty = false;
 
+async function getSessionData()
+{
+  const sessionId = localStorage.getItem("sessionId");
+  const userId = localStorage.getItem("userId");
+
+  const res = await fetch(`/sessions/${sessionId}?userId=${userId}`);
+  
+  if(!res.ok)
+  {
+    localStorage.clear();
+    window.location.href = "/";
+    return;
+  }
+  
+  const data = await res.json();
+
+  return {
+    sessionId: data.sessionId,
+    name: data.name,
+    genre: data.genre,
+    promptType: data.promptType,
+    prompt: data.prompt,
+    promptLocked: data.promptLocked,
+    content: data.content,
+    userCount: data.userCount,
+    createdAt: data.createdAt,
+    updatedAt: data.updatedAt
+  }
+}
+
 
 // Editing & saving story title
 story_title.addEventListener("blur", saveTitle);
 
 // Prevent Enter key from creating a new line and save
 story_title.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
+  if (e.key === "Enter") 
+  {
     e.preventDefault();
     saveTitle(); // Save immediately
     story_title.blur(); // End editing
   }
 });
 
-function saveTitle() 
+async function saveTitle() 
 {
-  const storyId = localStorage.getItem("storyId");
+  const data = await getSessionData();
 
-  if(!storyId)
-  {
-    return;
-  }
-
-  const story = window.story_manager.getStory(storyId);
-
-  if(!story)
+  if(!data)
   {
     return;
   }
@@ -56,19 +80,20 @@ function saveTitle()
     newTitle = "Untitled";
   }
 
-  story.title = newTitle;
+  data.name = newTitle;
   story_title.textContent = newTitle;
   page_name.textContent = newTitle;
 
-  window.story_manager.saveStory(story);
+  saveStory(true);
 }
 
 // Prompt Regeneration
 regen_button.addEventListener("click", async () => {
-  generatePrompt("template");
+  const data = await getSessionData();
+  generatePrompt(data.promptType, data.genre);
 });
 
-async function generatePrompt(source)
+async function generatePrompt(source, genre)
 {
   if(regenerationDisabled)
   {
@@ -84,7 +109,7 @@ async function generatePrompt(source)
     const res = await fetch(`/prompts/generate`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({source})
+      body: JSON.stringify({source, genre})
     });
 
     if(!res.ok) 
@@ -104,7 +129,7 @@ async function generatePrompt(source)
     const data = await res.json();
     story_prompt.textContent = data.prompt;
     story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
-    saveStory();
+    saveStory(true);
   }
 
   catch (err)
@@ -117,7 +142,13 @@ async function generatePrompt(source)
     if(!regenerationDisabled) 
     {
       regen_button.disabled = false;
-      regen_button.textContent = "Regenerate";
+      regen_button.innerHTML = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 2v6h-6"/>
+        <path d="M3 12a9 9 0 0 1 15-6.7L21 8"/>
+        <path d="M3 22v-6h6"/>
+        <path d="M21 12a9 9 0 0 1-15 6.7L3 16"/>
+      </svg>`;
     }
   }
 }
@@ -329,18 +360,7 @@ window.addEventListener("DOMContentLoaded", async() => {
     return;
   }
 
-  try
-  {
-    const res = await fetch(`/sessions/${sessionId}?userId=${userId}`);
-    
-    if(!res.ok)
-    {
-      localStorage.clear();
-      window.location.href = "/";
-      return;
-    }
-
-    const data = await res.json();
+  const data = await getSessionData();
 
     const title = document.getElementById("title");
     title.textContent = data.name;
@@ -349,7 +369,7 @@ window.addEventListener("DOMContentLoaded", async() => {
 
     if(!data.prompt && !regenerationDisabled)
     {
-      generatePrompt(data.promptSource);
+      generatePrompt(data.promptType, data.genre);
     }
 
     else
@@ -364,12 +384,5 @@ window.addEventListener("DOMContentLoaded", async() => {
       regen_button.textContent = "Prompt Locked";
     }
 
-    story_text.value = data.story;
-  }
-
-  catch(err) 
-  { 
-    console.error("Network error:", err); 
-    window.location.href = "/";
-  }
+    story_text.value = data.content;
 });
