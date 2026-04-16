@@ -50,7 +50,6 @@ async function getSessionData()
   }
 }
 
-
 // Editing & saving story title
 story_title.addEventListener("blur", saveTitle);
 
@@ -242,6 +241,8 @@ async function saveStory(silent)
 
   const sessionId = localStorage.getItem("sessionId");
   const userId = localStorage.getItem("userId");
+  const name = story_title.textContent.trim();
+  const prompt = story_prompt.textContent.trim();
   const text = story_text.value;
 
   if(!sessionId || !userId)
@@ -255,7 +256,7 @@ async function saveStory(silent)
     const res = await fetch(`/sessions/${sessionId}/write`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userId, text, mode: "replace"})
+      body: JSON.stringify({userId, name, prompt, text, mode: "replace"})
     });
 
     if(res.status === 400)

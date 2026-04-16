@@ -1,4 +1,3 @@
-const { get } = require("https");
 const { generateSessionId, generateUserId } = require("./utils/ids");
 
 const sessions_by_id = new Map(); // key is the session id, value is the session

@@ -28,7 +28,8 @@ app.get('/sessions', (req, res) => {
         summarized_sessions[i] = {
             id: sessions_list[i].id,
             name: sessions_list[i].name,
-            genre: sessions_list[i].genre,
+            genre: sessions_list[i].genre.name,
+            prompt: sessions_list[i].prompt,
             users: sessions_list[i].users.size,
             createdAt: sessions_list[i].createdAt
         }
@@ -226,7 +227,7 @@ app.post('/prompts/generate', (req, res) => {
 // Allows user to replace or add text to a sessions' story
 app.post('/sessions/:id/write', (req, res) => {
     const {id} = req.params;
-    const{userId, text, mode} = req.body;
+    const{userId, name, prompt, text, mode} = req.body;
 
     const session = getSessionById(id);
 
@@ -238,7 +239,7 @@ app.post('/sessions/:id/write', (req, res) => {
     
     const oldStory = session.content;
 
-    if(!userId || typeof text != "string")
+    if(!userId || typeof text != "string" || !name)
     {
         res.sendStatus(400);
         return;
@@ -250,14 +251,24 @@ app.post('/sessions/:id/write', (req, res) => {
         return;
     }
 
+    if(session.name !== name)
+    {
+        session.name = name;
+    }
+
+    if(session.prompt !== prompt)
+    {
+        session.prompt = prompt;
+    }
+
     if(mode === "replace")
     {
-        session.story = text;
+        session.content = text;
     }
 
     else if(mode === "append")
     {
-        session.story += text;
+        session.content += text;
     }
 
     else
