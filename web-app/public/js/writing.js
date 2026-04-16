@@ -109,13 +109,12 @@ async function generatePrompt(source)
 
     const data = await res.json();
     story_prompt.textContent = data.prompt;
-    story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
+    story.prompt = data.prompt;
+    saveStorySM(story);
 
-    // Save prompt into the local story
-    if(story) 
+    if(source === "challenge")
     {
-      story.prompt = data.prompt;
-      saveStorySM(story);
+      story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
     }
   }
 
@@ -398,7 +397,11 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 
     story_prompt.textContent = story.prompt;
-    story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
+
+    if(story.promptType === "challenge")
+    {
+      story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
+    }
   }
 
   regenerationDisabled = story.promptLocked;

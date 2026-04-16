@@ -127,8 +127,12 @@ async function generatePrompt(source, genre)
 
     const data = await res.json();
     story_prompt.textContent = data.prompt;
-    story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
     saveStory(true);
+
+    if(source === "challenge")
+    {
+      story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
+    }
   }
 
   catch (err)
@@ -376,7 +380,11 @@ window.addEventListener("DOMContentLoaded", async() => {
     else
     {
       story_prompt.textContent = data.prompt;
-      story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
+      
+      if(data.promptType === "challenge")
+      {
+        story_prompt.innerHTML = story_prompt.textContent.replace(/\n/g, "<br>");
+      }
     }
 
     if(regenerationDisabled && regen_button)
