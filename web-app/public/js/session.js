@@ -340,6 +340,79 @@ function showSaveStatus(message, success = true, silent = false)
   }, 1500);
 }
 
+download_button.addEventListener("click", (event) => {
+  event.stopPropagation();
+
+  download_menu.classList.toggle("open");
+});
+
+txt_download_button.addEventListener("click", async (event) => {
+  event.stopPropagation();
+  
+  const data = await getSessionData();
+
+  if(!data)
+  {
+    return;
+  }
+
+  const blob = formatStoryToTxt(data);
+
+  let filename = data.name.replace(/[\\\/:*?"<>|]/g, "");
+
+  if(!filename)
+  {
+    filename = "story";
+  }
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.txt`;
+  a.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  download_menu.classList.remove("open");
+});
+
+pdf_download_button.addEventListener("click", async (event) => {
+  event.stopPropagation();
+  
+  const data = await getSessionData();
+
+  if(!data)
+  {
+    return;
+  }
+
+  const blob = await formatStoryToPdf(data);
+
+  let filename = data.title.replace(/[\\\/:*?"<>|]/g, "");
+
+  if(!filename)
+  {
+    filename = "story";
+  }
+
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${filename}.pdf`;
+  a.click();
+
+  setTimeout(() => URL.revokeObjectURL(url), 100);
+  download_menu.classList.remove("open");
+});
+
+document.addEventListener("click", (event) => {
+  if(!download_menu.contains(event.target) && event.target !== download_button) 
+  {
+    download_menu.classList.remove("open");
+  }
+});
+
 window.addEventListener("beforeunload", (e) => {
   if(isExiting)
   {

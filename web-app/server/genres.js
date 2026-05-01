@@ -2,7 +2,6 @@ const fs = require("fs");
 const path = require("path");
 
 const genre_list = [];
-const delimiter ='|';
 
 try 
 {
@@ -18,7 +17,7 @@ try
             continue;
         }
 
-        let [name, ...prompt_array] = line.split(delimiter);
+        let name = line;
 
         name = name.trim()
 
@@ -26,18 +25,8 @@ try
         {
             throw new Error(`Malformed line: "${line}"`);
         }
-
-        let prompt = prompt_array.join(delimiter).trim();
-
-        if (!prompt) 
-        {
-            prompt = `You may begin writing a "${name}" story.`;
-        }
-
-        genre_list.push({
-            name: name,
-            prompt: prompt
-        });
+        
+        genre_list.push(name);
     }
 
     if(genre_list.length === 0)

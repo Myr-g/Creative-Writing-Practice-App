@@ -73,8 +73,8 @@ fetch('/genres')
 
     data.genres.forEach(genre => {
       const option = document.createElement("option");
-      option.value = genre.name;
-      option.textContent = genre.name;
+      option.value = genre;
+      option.textContent = genre;
       select.appendChild(option);
     });
   });

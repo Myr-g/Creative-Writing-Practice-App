@@ -95,7 +95,7 @@ function formatStoryForDownload(story)
 
   if(story.title && story.title.trim() !== "")
   {
-    title = story.title;
+    title = story.title || story.name;
   }
 
   else

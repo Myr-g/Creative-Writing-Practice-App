@@ -95,7 +95,7 @@ app.post('/sessions', (req, res) => {
 
     for(let i = 0; i < genre_list.length; i++)
     {
-        if(genre.toLowerCase() == genre_list[i].name.toLowerCase())
+        if(genre.toLowerCase() == genre_list[i].toLowerCase())
         {
             chosen_genre = genre_list[i];
             break;
