@@ -175,7 +175,7 @@ async function loadSessionsList()
     data.sessions.forEach(session => {
       const li = document.createElement("li");
       li.classList.add("session-item");
-      li.textContent = `${session.name} - ${session.genre.name} | Writers: ${session.users}`;
+      li.textContent = `${session.title} - ${session.genre} | Writers: ${session.users}`;
       li.dataset.sessionId = session.id;
 
       li.addEventListener("click", async () => {
@@ -187,7 +187,7 @@ async function loadSessionsList()
           return;
         }
           
-        if(window.confirm(`Join ${session.name}?`))
+        if(window.confirm(`Join ${session.title}?`))
         {
           joining = true;
           
@@ -282,13 +282,11 @@ create_button.addEventListener("click", async () => {
       {
         title = "Untitled";
       }
-      
-      const name = title;
 
       const createRes = await fetch("/sessions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({name, genre, promptType})
+        body: JSON.stringify({title, genre, promptType})
       });
 
       if(createRes.status === 400)

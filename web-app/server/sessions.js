@@ -17,7 +17,7 @@ function createSession(name, genre, promptType)
 
     let new_session = {
         id: session_id,
-        name: display_name,
+        title: display_name,
         genre: genre,
         promptType: promptType,
         prompt: "",
@@ -107,7 +107,7 @@ function removeUserFromSession(session_id, user_id)
     if(session.users.size === 0)
     {
         sessions_by_id.delete(session_id);
-        sessions_by_name.delete(session.name.toLowerCase());
+        sessions_by_name.delete(session.title.toLowerCase());
     }
 
     return true;

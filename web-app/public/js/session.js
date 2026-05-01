@@ -38,7 +38,7 @@ async function getSessionData()
 
   return {
     sessionId: data.sessionId,
-    name: data.name,
+    title: data.title,
     genre: data.genre,
     promptType: data.promptType,
     prompt: data.prompt,
@@ -79,7 +79,7 @@ async function saveTitle()
     newTitle = "Untitled";
   }
 
-  data.name = newTitle;
+  data.title = newTitle;
   story_title.textContent = newTitle;
   page_name.textContent = newTitle;
 
@@ -245,7 +245,7 @@ async function saveStory(silent)
 
   const sessionId = localStorage.getItem("sessionId");
   const userId = localStorage.getItem("userId");
-  const name = story_title.textContent.trim();
+  const title = story_title.textContent.trim();
   const prompt = story_prompt.textContent.trim();
   const text = story_text.value;
 
@@ -260,7 +260,7 @@ async function saveStory(silent)
     const res = await fetch(`/sessions/${sessionId}/write`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({userId, name, prompt, text, mode: "replace"})
+      body: JSON.stringify({userId, title, prompt, text, mode: "replace"})
     });
 
     if(res.status === 400)
@@ -358,7 +358,7 @@ txt_download_button.addEventListener("click", async (event) => {
 
   const blob = formatStoryToTxt(data);
 
-  let filename = data.name.replace(/[\\\/:*?"<>|]/g, "");
+  let filename = data.title.replace(/[\\\/:*?"<>|]/g, "");
 
   if(!filename)
   {
@@ -441,8 +441,8 @@ window.addEventListener("DOMContentLoaded", async() => {
   const data = await getSessionData();
 
     const title = document.getElementById("title");
-    title.textContent = data.name;
-    story_title.textContent = data.name;
+    title.textContent = data.title;
+    story_title.textContent = data.title;
     regenerationDisabled = data.promptLocked;
 
     if(!data.prompt && !regenerationDisabled)

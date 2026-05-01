@@ -6,7 +6,7 @@ function formatStoryToTxt(story)
 
     const formattedStory = []; 
     
-    formattedStory.push(story_data.title || story_data.name); 
+    formattedStory.push(story_data.title); 
 
     const metadata = story_data.metadata; 
 

@@ -27,8 +27,8 @@ app.get('/sessions', (req, res) => {
     {
         summarized_sessions[i] = {
             id: sessions_list[i].id,
-            name: sessions_list[i].name,
-            genre: sessions_list[i].genre.name,
+            title: sessions_list[i].title,
+            genre: sessions_list[i].genre,
             prompt: sessions_list[i].prompt,
             users: sessions_list[i].users.size,
             createdAt: sessions_list[i].createdAt
@@ -65,7 +65,7 @@ app.get('/sessions/:id', (req, res) => {
 
     const response = {
         sessionId: session.id,
-        name: session.name,
+        title: session.title,
         genre: session.genre,
         promptType: session.promptType,
         prompt: session.prompt,
@@ -83,11 +83,11 @@ app.get('/sessions/:id', (req, res) => {
 app.post('/sessions', (req, res) => {
     console.log(req.body);
 
-    const {name, genre, promptType} = req.body;
+    const {title, genre, promptType} = req.body;
     const genre_list = getGenres();
     let chosen_genre = null;
 
-    if(!name || !genre)
+    if(!title || !genre)
     {
         res.sendStatus(400);
         return;
@@ -108,7 +108,7 @@ app.post('/sessions', (req, res) => {
         return;
     }
 
-    const session = createSession(name, chosen_genre, promptType);
+    const session = createSession(title, chosen_genre, promptType);
 
     if(!session)
     {
@@ -119,7 +119,7 @@ app.post('/sessions', (req, res) => {
 
     res.status(201).json({
         id: session.id,
-        name: session.name,
+        title: session.title,
         genre: session.genre,
         createdAt: session.createdAt
     });
@@ -227,7 +227,7 @@ app.post('/prompts/generate', (req, res) => {
 // Allows user to replace or add text to a sessions' story
 app.post('/sessions/:id/write', (req, res) => {
     const {id} = req.params;
-    const{userId, name, prompt, text, mode} = req.body;
+    const{userId, title, prompt, text, mode} = req.body;
 
     const session = getSessionById(id);
 
@@ -239,7 +239,7 @@ app.post('/sessions/:id/write', (req, res) => {
     
     const oldStory = session.content;
 
-    if(!userId || typeof text != "string" || !name)
+    if(!userId || typeof text != "string" || !title)
     {
         res.sendStatus(400);
         return;
@@ -251,9 +251,9 @@ app.post('/sessions/:id/write', (req, res) => {
         return;
     }
 
-    if(session.name !== name)
+    if(session.title !== title)
     {
-        session.name = name;
+        session.title = title;
     }
 
     if(session.prompt !== prompt)
