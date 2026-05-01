@@ -1,11 +1,9 @@
-/* ---------- Reset ---------- */
-*,
-*::before,
-*::after {
+/* ---- Reset ---- */
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
-/* ---------- Variables ---------- */
+/* ---- Variables ---- */
 :root {
   --space-sm: 0.5rem;
   --space-md: 1.25rem;
@@ -21,55 +19,17 @@
   --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
 }
 
-:root[data-theme="dark"] {
-  --bg-page: #121212;
-  --bg-paper: #1b1b1b;
-
-  --text-main: #e6e6e6;
-  --text-muted: #a0a0a0;
-
-  --border-subtle: #333;
-  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
-}
-
-/* ---------- Page ---------- */
+/* ---- General ---- */
 body {
   margin: 0;
   padding: var(--space-lg);
-
   background-color: var(--bg-page);
   color: var(--text-main);
-
-  font-family: system-ui, -apple-system, BlinkMacSystemFont,
-               "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   line-height: 1.65;
 }
 
-/* ---------- Home container ---------- */
-.home {
-  max-width: 720px;
-  margin: 3rem auto;
-  padding: var(--space-lg);
-
-  background-color: var(--bg-paper);
-  border-radius: 12px;
-
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-}
-
-/* ---------- Sections ---------- */
-section {
-  padding: var(--space-md) 0;
-  margin-bottom: var(--space-sm);
-}
-
-/* Soft divider between sections */
-section:not(:last-child) {
-  border-bottom: 1px solid #eee;
-}
-
-/* ---------- Typography ---------- */
+/* Typography */
 h1 {
   font-size: 2rem;
   font-weight: 500;
@@ -92,7 +52,18 @@ p {
   color: var(--text-muted);
 }
 
-/* ---------- Forms ---------- */
+/* Sections */
+section {
+  padding: var(--space-md) 0;
+  margin-bottom: var(--space-sm);
+}
+
+/* Soft divider between sections */
+section:not(:last-child) {
+  border-bottom: 1px solid #eee;
+}
+
+/* Forms */
 form {
   display: flex;
   flex-wrap: wrap;
@@ -104,8 +75,7 @@ label {
   font-weight: 600;
 }
 
-input,
-select {
+input, select {
   font-family: inherit;
   font-size: 1rem;
 
@@ -116,13 +86,12 @@ select {
   background-color: #fff;
 }
 
-input:focus,
-select:focus {
+input:focus, select:focus {
   outline: none;
   border-color: #555;
 }
 
-/* ---------- Buttons ---------- */
+/* Buttons */
 button {
   font-family: inherit;
   font-size: 1rem;
@@ -147,20 +116,19 @@ button:active {
   background-color: #222;
 }
 
-#create_session {
-  margin-left: auto;
+/* ---- Home Container ---- */
+.home {
+  max-width: 720px;
+  margin: 3rem auto;
+  padding: var(--space-lg);
+
+  background-color: var(--bg-paper);
+  border-radius: 12px;
+
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
-:root[data-theme="dark"] button {
-  background-color: #2a2a2a;
-  border-color: #444;
-}
-
-:root[data-theme="dark"] button:hover:not(:disabled) {
-  background-color: #333;
-}
-
-/* ---------- New Story Panel ---------- */
+/* New Story Panel */
 .new_story_panel {
   position: fixed;
   inset: 0;
@@ -266,31 +234,7 @@ button:active {
   margin-right: auto;
 }
 
-/* ---------- Sessions list ---------- */
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.session-item {
-  padding: 0.6rem 0.75rem;
-  margin: 0.2rem 0;
-
-  border-radius: 6px;
-  cursor: pointer;
-
-  transition: background-color 150ms ease;
-}
-
-.session-item:hover {
-  background-color: #f3f3f3;
-}
-
-.session-item:focus {
-  outline: 2px solid #ccc;
-}
-
+/* Stories List */
 .story-item {
   display: flex;
   align-items: center;
@@ -330,6 +274,51 @@ ul {
   justify-content: center;
 }
 
+/* Sessions list */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.session-item {
+  padding: 0.6rem 0.75rem;
+  margin: 0.2rem 0;
+
+  border-radius: 6px;
+  cursor: pointer;
+
+  transition: background-color 150ms ease;
+}
+
+.session-item:hover {
+  background-color: #f3f3f3;
+}
+
+.session-item:focus {
+  outline: 2px solid #ccc;
+}
+
+/* ---- Dark Mode ---- */
+:root[data-theme="dark"] {
+  --bg-page: #121212;
+  --bg-paper: #1b1b1b;
+
+  --text-main: #e6e6e6;
+  --text-muted: #a0a0a0;
+
+  --border-subtle: #333;
+  --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.6);
+}
+
+:root[data-theme="dark"] button {
+  background-color: #2a2a2a;
+  border-color: #444;
+}
+
+:root[data-theme="dark"] button:hover:not(:disabled) {
+  background-color: #333;
+}
 
 :root[data-theme="dark"] .session-item:hover {
   background-color: #242424;
